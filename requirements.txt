@@ -1,0 +1,17 @@
+# 安装一次即可在页面使用全部模型（仅需填写对应 API Key）
+# pip install -r requirements.txt
+
+# 核心
+python-dotenv
+streamlit
+numpy
+pandas
+
+# OpenAI（同时用于 OpenAI / DeepSeek / 智谱 / Moonshot 等兼容接口）
+openai>=1.0.0
+
+# Claude
+anthropic
+
+# Google Gemini
+google-generativeai

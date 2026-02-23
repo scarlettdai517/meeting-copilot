@@ -1,0 +1,24 @@
+# 本地 API 配置（含密钥，勿提交）
+data/llm_config.json
+
+# 本地会议数据和缓存（可选，不提交则仓库更干净）
+data/meetings/
+data/embeddings_cache/
+
+# 虚拟环境
+.venv
+venv
+env
+
+# 环境变量（若含密钥）
+.env
+
+# 系统与 IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
