@@ -22,12 +22,20 @@ os.makedirs(CACHE_DIR, exist_ok=True)
 # Embedding 生成
 # ====================================
 def get_openai_client():
-    """获取OpenAI客户端"""
-    api_key = os.getenv("OPENAI_API_KEY", "")
-    base_url = os.getenv("OPENAI_BASE_URL", "")
+    """获取OpenAI客户端：优先用界面配置，再回退到环境变量"""
+    try:
+        from providers import get_provider_config
+        c = get_provider_config("openai")
+        api_key = (c.get("api_key") or "").strip()
+        base_url = (c.get("base_url") or "").strip()
+    except Exception:
+        api_key = os.getenv("OPENAI_API_KEY", "")
+        base_url = os.getenv("OPENAI_BASE_URL", "")
 
     if not api_key:
-        raise RuntimeError("Missing OPENAI_API_KEY in environment variables.")
+        raise RuntimeError(
+            "Smart RAG 的语义检索需要 OpenAI API Key。请在上方「配置当前模型 API」中选择 OpenAI 并填写 Key，或在 .env 中设置 OPENAI_API_KEY。"
+        )
 
     return OpenAI(api_key=api_key, base_url=base_url or None)
 
