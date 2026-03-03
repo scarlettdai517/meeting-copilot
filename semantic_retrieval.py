@@ -162,7 +162,8 @@ def semantic_retrieve(
     question: str,
     chunks: List[Dict],
     chunks_embeddings: List[List[float]],
-    top_k: int = 6
+    top_k: int = 6,
+    min_sim: float = None
 ) -> List[Dict]:
     """
     基于语义相似度检索最相关的chunks
@@ -172,6 +173,7 @@ def semantic_retrieve(
         chunks: chunk列表 [{"id": 0, "text": "..."}, ...]
         chunks_embeddings: chunks对应的embeddings
         top_k: 返回top-k个结果
+        min_sim: 可选；若给出则只保留相似度>=min_sim的块，再取前top_k个（不足则全返回）
 
     返回:
         List[Dict]: 按相似度排序的chunks
@@ -188,7 +190,10 @@ def semantic_retrieve(
     # 3. 按相似度降序排序
     similarities.sort(key=lambda x: x[0], reverse=True)
 
-    # 4. 返回Top-K
+    # 4. 若设 min_sim 则先过滤再取 top_k
+    if min_sim is not None:
+        filtered = [item for item in similarities if item[0] >= min_sim]
+        return [chunk for _, chunk in filtered[:top_k]]
     return [chunk for _, chunk in similarities[:top_k]]
 
 

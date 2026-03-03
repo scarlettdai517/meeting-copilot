@@ -6,6 +6,8 @@ python-dotenv
 streamlit
 numpy
 pandas
+sentence-transformers
+jieba
 
 # OpenAI（同时用于 OpenAI / DeepSeek / 智谱 / Moonshot 等兼容接口）
 openai>=1.0.0

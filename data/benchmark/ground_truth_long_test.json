@@ -1,0 +1,34 @@
+{
+  "transcript_path": "transcript_long_test.txt",
+  "config": {
+    "chunk_size": 512,
+    "overlap": 100
+  },
+  "_comment": "relevant_chunk_ids 基于 transcript_long_test.txt 按 512 字符/100 字符重叠切分（共 37 个 chunk），每题标注包含答案的 chunk 集合。",
+  "questions": [
+    {
+      "question": "建设这个面向机构和合作商的后台服务管理系统，对公司的战略意义是什么？高管开场时提到了哪些核心理由？",
+      "relevant_chunk_ids": [0, 1, 2]
+    },
+    {
+      "question": "调研结果显示，机构用户和合作商用户对后台系统的核心需求有哪些主要差异？分别最关注哪些功能模块？",
+      "relevant_chunk_ids": [3, 4, 5, 6, 7]
+    },
+    {
+      "question": "多租户数据隔离有哪几种技术方案？团队最终倾向于哪种方案，给出的理由是什么？",
+      "relevant_chunk_ids": [12, 13, 14]
+    },
+    {
+      "question": "一期功能范围最终确定了哪几个核心模块？每个模块的主要内容是什么？",
+      "relevant_chunk_ids": [24, 25, 26, 35]
+    },
+    {
+      "question": "针对报表导出和设备状态实时展示这两个性能瓶颈，会议分别提出了什么优化解决方案？",
+      "relevant_chunk_ids": [29, 30]
+    },
+    {
+      "question": "会议整理了哪些待办事项？其中哪几项的负责人或截止时间尚不明确，还处于待定状态？",
+      "relevant_chunk_ids": [31, 32]
+    }
+  ]
+}

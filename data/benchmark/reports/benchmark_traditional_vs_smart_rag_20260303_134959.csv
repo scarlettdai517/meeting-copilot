@@ -1,0 +1,25 @@
+method,session,question,mode,meeting_type,chunk_source,retrieval_mode,rerank_enabled,cross_encoder_available,cross_encoder_error,rerank_method,std_weight,dynamic_threshold,coverage_pct,chunks_count,recall,precision,f1,tp,num_relevant,sim_max,sim_min,sim_avg
+traditional,long,建设这个面向机构和合作商的后台服务管理系统，对公司的战略意义是什么？高管开场时提到了哪些核心理由？,rag,long,existing:chunks_long_test.json,,,,,,,0.0000,17.19,5,0.6667,0.4000,0.5000,2,3,0.5806,0.5083,0.5326
+smart,long,建设这个面向机构和合作商的后台服务管理系统，对公司的战略意义是什么？高管开场时提到了哪些核心理由？,rag,long,existing:chunks_long_test.json,semantic_only,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.4,0.5632,19.9,6,1.0000,0.5000,0.6667,3,3,0.5806,0.4923,0.5259
+traditional,long,调研结果显示，机构用户和合作商用户对后台系统的核心需求有哪些主要差异？分别最关注哪些功能模块？,rag,long,existing:chunks_long_test.json,,,,,,,0.0000,18.86,5,0.4000,0.4000,0.4000,2,5,0.6897,0.5673,0.6202
+smart,long,调研结果显示，机构用户和合作商用户对后台系统的核心需求有哪些主要差异？分别最关注哪些功能模块？,rag,long,existing:chunks_long_test.json,semantic_only,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.4,0.6496,21.66,6,0.6000,0.5000,0.5455,3,5,0.6897,0.5460,0.6075
+traditional,long,多租户数据隔离有哪几种技术方案？团队最终倾向于哪种方案，给出的理由是什么？,rag,long,existing:chunks_long_test.json,,,,,,,0.0000,18.31,5,0.6667,0.4000,0.5000,2,3,0.6862,0.4546,0.5541
+smart,long,多租户数据隔离有哪几种技术方案？团队最终倾向于哪种方案，给出的理由是什么？,rag,long,existing:chunks_long_test.json,semantic_only,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.4,0.5237,22.0,6,1.0000,0.5000,0.6667,3,3,0.6862,0.4297,0.5336
+traditional,long,一期功能范围最终确定了哪几个核心模块？每个模块的主要内容是什么？,rag,long,existing:chunks_long_test.json,,,,,,,0.0000,16.93,5,0.5000,0.4000,0.4444,2,4,0.5347,0.4642,0.4887
+smart,long,一期功能范围最终确定了哪几个核心模块？每个模块的主要内容是什么？,rag,long,existing:chunks_long_test.json,semantic_only,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.4,0.5338,18.24,5,1.0000,0.8000,0.8889,4,4,0.4870,0.4041,0.4488
+traditional,long,针对报表导出和设备状态实时展示这两个性能瓶颈，会议分别提出了什么优化解决方案？,rag,long,existing:chunks_long_test.json,,,,,,,0.0000,16.64,5,1.0000,0.4000,0.5714,2,2,0.5602,0.5261,0.5402
+smart,long,针对报表导出和设备状态实时展示这两个性能瓶颈，会议分别提出了什么优化解决方案？,rag,long,existing:chunks_long_test.json,semantic_only,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.4,0.5178,21.52,6,1.0000,0.3333,0.5000,2,2,0.5430,0.4830,0.5146
+traditional,long,会议整理了哪些待办事项？其中哪几项的负责人或截止时间尚不明确，还处于待定状态？,rag,long,existing:chunks_long_test.json,,,,,,,0.0000,16.71,5,1.0000,0.4000,0.5714,2,2,0.5357,0.4389,0.4888
+smart,long,会议整理了哪些待办事项？其中哪几项的负责人或截止时间尚不明确，还处于待定状态？,rag,long,existing:chunks_long_test.json,semantic_only,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.4,0.5134,12.91,4,1.0000,0.5000,0.6667,2,2,0.5357,0.4548,0.5013
+traditional,short,今天这次会议有哪三个主要议题？分别是什么内容？,rag,short,existing:chunks_short_test.json,,,,,,,0.0000,22.64,5,0.5000,0.2000,0.2857,1,2,0.4818,0.3401,0.3845
+smart,short,今天这次会议有哪三个主要议题？分别是什么内容？,rag,short,existing:chunks_short_test.json,semantic_bm25_rrf,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.2,0.5066,3.87,1,0.5000,1.0000,0.6667,1,2,0.4817,0.4817,0.4817
+traditional,short,机构端仪表盘首页的设计包含哪些核心内容？会议中提出了哪些具体的修改意见？,rag,short,existing:chunks_short_test.json,,,,,,,0.0000,25.33,5,0.4286,0.6000,0.5000,3,7,0.5744,0.4594,0.5091
+smart,short,机构端仪表盘首页的设计包含哪些核心内容？会议中提出了哪些具体的修改意见？,rag,short,existing:chunks_short_test.json,semantic_bm25_rrf,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.2,0.5390,30.28,6,0.5714,0.6667,0.6154,4,7,0.5744,0.4050,0.4917
+traditional,short,合作商端仪表盘首页的设计是怎样的？关于分润数据的展示逻辑（实时预计值 vs 月底确认）是如何设计的？,rag,short,existing:chunks_short_test.json,,,,,,,0.0000,23.66,5,0.4286,0.6000,0.5000,3,7,0.6618,0.6185,0.6291
+smart,short,合作商端仪表盘首页的设计是怎样的？关于分润数据的展示逻辑（实时预计值 vs 月底确认）是如何设计的？,rag,short,existing:chunks_short_test.json,semantic_bm25_rrf,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.2,0.6260,30.28,6,0.5714,0.6667,0.6154,4,7,0.6616,0.5709,0.6124
+traditional,short,分润明细报表需要哪些字段？设备使用效益报告需要哪些字段？导出格式分别是什么？,rag,short,existing:chunks_short_test.json,,,,,,,0.0000,25.09,5,0.8000,0.8000,0.8000,4,5,0.6549,0.5083,0.5747
+smart,short,分润明细报表需要哪些字段？设备使用效益报告需要哪些字段？导出格式分别是什么？,rag,short,existing:chunks_short_test.json,semantic_bm25_rrf,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.2,0.5818,29.48,6,1.0000,0.8333,0.9091,5,5,0.6549,0.4869,0.5600
+traditional,short,报表导出功能的同步/异步自适应策略是如何设计的？前后端之间如何通过接口返回类型来配合处理？,rag,short,existing:chunks_short_test.json,,,,,,,0.0000,24.9,5,0.3333,0.2000,0.2500,1,3,0.5644,0.5347,0.5422
+smart,short,报表导出功能的同步/异步自适应策略是如何设计的？前后端之间如何通过接口返回类型来配合处理？,rag,short,existing:chunks_short_test.json,semantic_bm25_rrf,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.2,0.5884,27.45,6,1.0000,0.5000,0.6667,3,3,0.5644,0.4992,0.5292
+traditional,short,会议结束时整理了哪些待办事项？各项分别由谁负责，截止时间是什么？,rag,short,existing:chunks_short_test.json,,,,,,,0.0000,23.84,5,0.6000,0.6000,0.6000,3,5,0.4993,0.4094,0.4484
+smart,short,会议结束时整理了哪些待办事项？各项分别由谁负责，截止时间是什么？,rag,short,existing:chunks_short_test.json,semantic_bm25_rrf,True,True,,cross_encoder:BAAI/bge-reranker-v2-m3,0.2,0.5021,19.02,4,0.6000,0.7500,0.6667,3,5,0.4995,0.4095,0.4504
