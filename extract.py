@@ -39,14 +39,14 @@ _GROWTH_FEW_SHOT = """
 说明：会议未提具体竞品时 competitor_mentions 输出 []；芯片内存、过热等放技术模板，不进 pain_points。
 """
 
-# 高管决策简报 Few-Shot（结论=定论不含待办，资源/阻碍/风险多条+evidence）
+# 高管决策简报 Few-Shot（结论=定论不含待办，介入事项与风险分离，并强调不漏发布范围策略）
 _EXEC_FEW_SHOT = """
-【输出示例】（高管模板：结论只放已拍板定论；待办/阻碍进 resource_blockers；风险按 red/yellow/green 多条列出）
-"conclusion": ["2.0 端云协同方向已定", "客户底线：无网时家电控制必须可用", "演示版必须集成方言识别"]
-"resource_blockers": [{"item": "Protobuf 协议定义未到位，需与小李对接", "type": "blocker", "evidence": "大刘：小李那边还没把 Protobuf 的定义发我。"}, {"item": "方言训练需 H20 算力", "type": "resource", "evidence": "阿强：我去跟老板申请专项资金。"}]
-"risk_traffic_light": [{"risk": "方言识别可能影响稳定性", "level": "yellow", "evidence": "大刘：风险极大，为了方言牺牲稳定性现场崩了谁负责？"}, {"risk": "方言可能赶不上推介会", "level": "red", "evidence": "Iris：那根本不可能……"}]
-"milestone_confidence": {"overall": "中等", "notes": "样机与方言时间紧，依赖协议与基准表到位", "evidence": "赵总：下个月中旬推介会，还没东西出来单子保不住。"}
-说明：像「需要尽快确定 Protobuf」这种是阻碍，进 resource_blockers，不进 conclusion。
+【输出示例】（高管模板：结论只放已拍板定论；介入事项写“请管理层做什么”；风险按 red/yellow/green 多条列出）
+"conclusion": ["2.0 端云协同方向已定", "客户底线：无网时家电控制必须可用", "短期不做实时能力，先保证会后处理可信", "Beta 先内部与友好客户试点，暂不大规模放出", "AI 仅作为助手，不替代人工决策"]
+"management_interventions": [{"item": "Protobuf 协议定义未到位影响联调进度", "request_type": "跨部门协调", "specific_request": "协调中间件团队在本周内确认并下发协议版本", "owner_and_collaborators": "牵头：平台负责人；协同：中间件团队/后端团队", "time_window": "本周内", "evidence": "大刘：小李那边还没把 Protobuf 的定义发我。"}, {"item": "方言训练资源不足可能影响推介会版本", "request_type": "资源调配", "specific_request": "批准追加 H20 训练资源并确认预算", "owner_and_collaborators": "牵头：阿强；协同：财务/算法团队", "time_window": "两周内", "evidence": "阿强：我去跟老板申请专项资金。"}]
+"risk_traffic_light": [{"risk": "方言识别可能影响稳定性", "level": "yellow", "mitigation_strategy": "先冻结高风险方言范围，按灰度名单逐批放开并加稳定性回归", "evidence": "大刘：风险极大，为了方言牺牲稳定性现场崩了谁负责？"}, {"risk": "方言可能赶不上推介会", "level": "red", "mitigation_strategy": "将方言目标拆为基础包+增量包，先保障主流程演示可用", "evidence": "Iris：那根本不可能……"}, {"risk": "若强行上实时能力，用户体验和稳定性可能下降", "level": "yellow", "mitigation_strategy": "短期保持会后处理路线，实时链路仅做小流量压测验证", "evidence": "大刘：实时并发一上来就慢，体验会掉。"}]
+"milestone_confidence": {"overall": "中等", "notes": "需在两周内完成可追溯与可信能力，依赖标注产能与合规口径明确", "evidence": "赵总：下个月中旬推介会，还没东西出来单子保不住。"}
+说明：像「需要尽快确定 Protobuf」这种进 management_interventions；risk_traffic_light 写“风险+缓解策略”，不写管理层介入请求动作。结论中的“不做项”与风险中的“若做会出问题”可同时存在。
 """
 
 # 外部协作与商务 Few-Shot（RACI 区分我方/对方，下次同步未约定填未明确）
@@ -62,11 +62,11 @@ _EXTERNAL_FEW_SHOT = """
 
 def build_system_prompt(template_name: str) -> str:
     """按所选模板构建 system prompt：提炼指引 + 该模板专属 JSON schema；通用模板追加 Few-Shot。"""
-    from templates import template_names
-    tid = display_name_to_template_id(template_name) if template_name in template_names() else template_name
+    from templates import TEMPLATES
+    tid = template_name if template_name in TEMPLATES else display_name_to_template_id(template_name)
     guide = get_template_prompt_guide(template_name)
     schema = get_template_schema_json(template_name)
-    display = template_name if template_name in template_names() else template_id_to_display_name(tid)
+    display = template_id_to_display_name(tid)
     base = f"""你是一个专业的会议助手，按所选模板从会议转写中提炼结构化纪要。
 
 【当前模板】{display}
@@ -103,11 +103,66 @@ def _normalize_general_result(data: dict) -> None:
             item["owner"] = "未明确"
 
 
+def _normalize_exec_result(data: dict) -> None:
+    """高管模板后处理：兼容旧字段并补齐介入事项的缺省值。"""
+    if "management_interventions" not in data and "resource_blockers" in data:
+        data["management_interventions"] = data.get("resource_blockers") or []
+
+    for item in data.get("management_interventions") or []:
+        if not isinstance(item, dict):
+            continue
+        if not (item.get("owner_and_collaborators") or "").strip():
+            item["owner_and_collaborators"] = "未明确"
+        if not (item.get("time_window") or "").strip():
+            item["time_window"] = "未明确"
+
+    for item in data.get("risk_traffic_light") or []:
+        if not isinstance(item, dict):
+            continue
+        if not (item.get("mitigation_strategy") or "").strip():
+            item["mitigation_strategy"] = "待补充（会议未明确）"
+        # 风险等级归一
+        level_raw = (item.get("level") or "").strip().lower()
+        level_map = {
+            "红": "red",
+            "黄": "yellow",
+            "绿": "green",
+            "high": "red",
+            "medium": "yellow",
+            "low": "green",
+        }
+        normalized_level = level_map.get(level_raw, level_raw)
+        if normalized_level not in {"red", "yellow", "green"}:
+            normalized_level = "yellow"
+
+        # 合规/法律类风险一律强制 red（硬规则）
+        risk_text = (item.get("risk") or "").lower()
+        evidence_text = (item.get("evidence") or "").lower()
+        compliance_keywords = (
+            "合规",
+            "法律",
+            "法务",
+            "监管",
+            "违规",
+            "处罚",
+            "隐私",
+            "数据泄露",
+            "审计",
+            "license",
+            "compliance",
+            "legal",
+            "regulat",
+        )
+        if any(k in risk_text or k in evidence_text for k in compliance_keywords):
+            normalized_level = "red"
+        item["level"] = normalized_level
+
+
 def extract_structured(
     template_name: str, transcript: str, provider: str | None = None
 ) -> dict:
-    from templates import template_names, display_name_to_template_id
-    tid = display_name_to_template_id(template_name) if template_name in template_names() else template_name
+    from templates import TEMPLATES, display_name_to_template_id
+    tid = template_name if template_name in TEMPLATES else display_name_to_template_id(template_name)
     system_prompt = build_system_prompt(template_name)
 
     cot_hint = ""
@@ -128,8 +183,13 @@ def extract_structured(
         )
     elif tid == TEMPLATE_ID_EXEC:
         cot_hint = (
-            "请先通读转写，逐项列出：①已达成共识的结论与客户底线（仅定论，不含「需要做XX」）"
-            "②需老板协调的资源与阻碍（含协议未定、算力/芯片/人力等）③重大风险并标 red/yellow/green（多条）④里程碑整体置信度与关键依赖。输出时 conclusion 只放定论，待办与阻碍放进 resource_blockers。\n\n"
+            "请先通读转写，按“先粗召回、后归类”执行：先列出所有候选关键信息，再写 JSON，避免遗漏。"
+            "①结论候选池至少检查：方向拍板、范围取舍、短期不做项、发布范围策略（如先内部/友好客户试点）、方法论原则（如 AI 仅辅助）；其中属于定论的都写入 conclusion。"
+            "特别保留否定型决策（如不做/先不做/暂不放出），不要被其他正向结论吞并。"
+            "②需要管理层介入的事项（至少满足：需要拍板/跨部门协调/授权背书之一）写入 management_interventions，并补全请求动作、牵头协同方、时间窗口；缺失填「未明确」，不要丢项。"
+            "③重大风险写 risk_traffic_light（red/yellow/green），每条包含 risk + mitigation_strategy：优先提取当前已在做的缓解动作；若原文未直接给出，可基于附近上下文给出可执行的下一步策略；若仍无依据则写「待补充（会议未明确）」。"
+            "management_interventions 写“需要管理层做什么动作”，risk_traffic_light 写“风险如何缓解”，二者不要混写；若存在“暂不做X”与“做X有风险”，二者可并存。"
+            "④里程碑整体置信度与关键依赖写 milestone_confidence，其中 notes 尽量包含「目标能力 + 时间窗口 + 关键依赖」，避免泛化。注意：risk_traffic_light 与 management_interventions 结构上必须分离。\n\n"
         )
     elif tid == TEMPLATE_ID_EXTERNAL:
         cot_hint = (
@@ -157,6 +217,8 @@ def extract_structured(
 
     if tid == TEMPLATE_ID_GENERAL:
         _normalize_general_result(data)
+    elif tid == TEMPLATE_ID_EXEC:
+        _normalize_exec_result(data)
     return data
 
 

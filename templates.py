@@ -14,8 +14,9 @@ TEMPLATE_ID_EXTERNAL = "external"
 # 展示名：中文 (English)，用于 UI 与历史记录
 TEMPLATES = {
     TEMPLATE_ID_GENERAL: {
-        "name_zh": "通用纪要",
-        "name_en": "General Meeting Notes",
+        "name_zh": "通用结构化纪要模板",
+        "name_en": "The General-Purpose Recap",
+        "display_zh_only": True,
         "desc": "任何人可看，无角色侧重；会议说了什么就总结什么，信息最全。",
         "audience": "任意参会者、需完整留痕的场景",
         "scenario": "各类会议通用，需保留完整结论/决策/待办/风险/待定时",
@@ -67,21 +68,22 @@ TEMPLATES = {
     TEMPLATE_ID_DEV: {
         "name_zh": "技术执行模板",
         "name_en": "The Dev-Centric Sync",
+        "display_zh_only": True,
         "desc": "屏蔽话术干扰，直达逻辑变更、接口协议与部署链路；便于转 Jira/GitHub。",
         "audience": "架构师、开发者、测试工程师、技术项目经理",
         "scenario": "技术评审、方案对齐、故障复盘、迭代同步",
         "sections": [
-            {"key": "architecture_changes", "label_zh": "架构变更说明", "label_en": "Architecture Changes"},
-            {"key": "api_protocol_definitions", "label_zh": "API/协议定义", "label_en": "API & Protocol Definitions"},
-            {"key": "bug_issue_list", "label_zh": "Bug & Issue 列表", "label_en": "Bug & Issue List"},
-            {"key": "env_dependencies", "label_zh": "环境/依赖需求", "label_en": "Environment & Dependencies"},
+            {"key": "architecture_changes", "label_zh": "架构变更（系统级决策）", "label_en": "Architecture Changes"},
+            {"key": "api_protocol_definitions", "label_zh": "接口与协议定义（对接规则）", "label_en": "API & Protocol Definitions"},
+            {"key": "bug_issue_list", "label_zh": "问题清单（含复现条件）", "label_en": "Bug & Issue List"},
+            {"key": "env_dependencies", "label_zh": "资源与推进条件（含交付节点）", "label_en": "Environment & Dependencies"},
         ],
         "schema_json": """
 {
-  "architecture_changes": [{"change": "变更描述（如从纯云变端云协同、某组件替换）", "component": "受影响组件（如 SoC/端侧/云端）", "evidence": "原文短句，必填"}],
-  "api_protocol_definitions": [{"item": "协议或接口名（如 Protobuf）", "field_or_behavior": "定义内容或待办（如协议定义待定、需与XX对接）", "evidence": "原文短句，必填"}],
+  "architecture_changes": [{"change": "变更内容（如从纯云变端云协同、某组件替换）", "component": "受影响系统部分（如 SoC/端侧/云端）", "evidence": "原文短句，必填"}],
+  "api_protocol_definitions": [{"item": "协议或接口项（如 Protobuf）", "field_or_behavior": "定义内容或当前状态（如协议待定、需与XX对接）", "evidence": "原文短句，必填"}],
   "bug_issue_list": [{"description": "问题描述", "repro_condition": "复现条件（如运行10分钟后）", "severity": "P0|P1|P2", "evidence": "原文短句，必填"}],
-  "env_dependencies": [{"requirement": "需求（硬件/算力/样机/内存/NPU/量化要求等）", "owner_or_deadline": "负责人或截止时间", "evidence": "原文短句，必填"}]
+  "env_dependencies": [{"requirement": "前置条件/资源需求（硬件/算力/样机/内存/NPU/量化要求等）", "owner_or_deadline": "负责人或截止时间", "evidence": "原文短句，必填"}]
 }
 """,
         "prompt_guide": """
@@ -109,22 +111,23 @@ TEMPLATES = {
 
     TEMPLATE_ID_GROWTH: {
         "name_zh": "业务增长与产品模板",
-        "name_en": "The Growth & UX Blueprint",
+        "name_en": "Growth & UX Blueprint",
+        "display_zh_only": True,
         "desc": "关注卖点、痛点、排期与竞品；供市场写推文、PM 调 PRD。",
         "audience": "产品经理、市场、运营、增长负责人",
         "scenario": "需求评审、版本规划、用户反馈会、竞品分析会",
         "sections": [
-            {"key": "pain_points", "label_zh": "用户痛点洞察", "label_en": "User Pain Points"},
-            {"key": "core_selling_points", "label_zh": "核心卖点同步", "label_en": "Core Selling Points"},
-            {"key": "launch_countdown", "label_zh": "上线/发版倒计时", "label_en": "Launch Countdown"},
-            {"key": "competitor_mentions", "label_zh": "竞品对标点", "label_en": "Competitor Insights"},
+            {"key": "pain_points", "label_zh": "用户痛点（可感知体验）", "label_en": "User Pain Points"},
+            {"key": "core_selling_points", "label_zh": "核心卖点（价值主张）", "label_en": "Core Selling Points"},
+            {"key": "launch_countdown", "label_zh": "上线推进（版本节奏）", "label_en": "Launch Countdown"},
+            {"key": "competitor_mentions", "label_zh": "竞品动态与应对", "label_en": "Competitor Insights"},
         ],
         "schema_json": """
 {
-  "pain_points": [{"insight": "痛点归纳", "scene_or_quote": "用户/客户原话或场景", "evidence": "原文短句，必填"}],
-  "core_selling_points": [{"point": "卖点表述", "version_or_scope": "版本或范围", "evidence": "原文短句，必填"}],
-  "launch_countdown": [{"feature_or_milestone": "功能或里程碑", "mvp_status": "进行中/待完成/待评估等", "expected_delivery": "预计交付时间", "evidence": "原文短句，必填"}],
-  "competitor_mentions": [{"competitor": "竞品/友商", "dynamic": "对方动态", "response": "我方应对", "evidence": "原文短句"}]
+  "pain_points": [{"insight": "痛点结论（面向用户可感知体验）", "scene_or_quote": "用户/客户场景或原话", "evidence": "原文短句，必填"}],
+  "core_selling_points": [{"point": "卖点主张", "version_or_scope": "生效范围与边界（版本/场景）", "evidence": "原文短句，必填"}],
+  "launch_countdown": [{"feature_or_milestone": "功能或里程碑项", "mvp_status": "MVP状态（进行中/待完成/待评估/已延期）", "expected_delivery": "预计交付时间", "evidence": "原文短句，必填"}],
+  "competitor_mentions": [{"competitor": "竞品/友商", "dynamic": "对方动态或动作", "response": "我方应对策略", "evidence": "原文短句"}]
 }
 """,
         "prompt_guide": """
@@ -150,64 +153,80 @@ TEMPLATES = {
     },
 
     TEMPLATE_ID_EXEC: {
-        "name_zh": "高管决策简报",
+        "name_zh": "高管决策简报模板",
         "name_en": "The Exec TL;DR Brief",
-        "desc": "极简：结论、资源/阻碍、风险红绿灯、里程碑置信度；辅助资源配置。",
+        "display_zh_only": True,
+        "desc": "极简：结论、管理层介入事项、风险红绿灯、里程碑置信度；辅助高层拍板与跨部门协同。",
         "audience": "CEO、部门负责人、投资人",
         "scenario": "经营会、汇报会、投资尽调",
         "sections": [
-            {"key": "conclusion", "label_zh": "会议结论", "label_en": "Conclusion"},
-            {"key": "resource_blockers", "label_zh": "资源投入/阻碍", "label_en": "Resource & Blockers"},
-            {"key": "risk_traffic_light", "label_zh": "重大风险红绿灯", "label_en": "Risk Traffic Light"},
-            {"key": "milestone_confidence", "label_zh": "里程碑状态", "label_en": "Milestone Status"},
+            {"key": "conclusion", "label_zh": "会议结论（已拍板）", "label_en": "Conclusion"},
+            {"key": "management_interventions", "label_zh": "管理层介入事项（需拍板/需协调）", "label_en": "Management Interventions"},
+            {"key": "risk_traffic_light", "label_zh": "重大风险等级（红黄绿）", "label_en": "Risk Traffic Light"},
+            {"key": "milestone_confidence", "label_zh": "里程碑置信度", "label_en": "Milestone Status"},
         ],
         "schema_json": """
 {
-  "conclusion": ["仅已达成共识的定论或方向，每条一句短句"],
-  "resource_blockers": [{"item": "资源或阻碍描述", "type": "resource|blocker", "evidence": "原文短句，必填"}],
-  "risk_traffic_light": [{"risk": "风险描述", "level": "red|yellow|green", "evidence": "原文短句，必填"}],
-  "milestone_confidence": {"overall": "整体置信度（如高/中/低）", "notes": "关键依赖或压力说明", "evidence": "原文短句，必填"}
+  "conclusion": ["已达成共识的定论或方向（每条一句）"],
+  "management_interventions": [{"item": "介入事项（一句话描述，客观中性）", "request_type": "请求类型（示例：拍板/资源调配/跨部门协调/授权背书/优先级调整；也可填写会议中其他需要管理层介入的类型）", "specific_request": "具体请求（用动词开头，如确定/批准/指派/协调/确认）", "owner_and_collaborators": "牵头人/协同方（若未明确填「未明确」）", "time_window": "时间窗口（原文提及什么就写什么；若未明确填「未明确」）", "evidence": "原文短句，必填"}],
+  "risk_traffic_light": [{"risk": "风险描述", "level": "red|yellow|green（红/黄/绿）", "mitigation_strategy": "缓解策略（正在做什么，以及/或建议下一步怎么做；若会议未提填「待补充（会议未明确）」）", "evidence": "原文短句，必填"}],
+  "milestone_confidence": {"overall": "整体置信度（高/中/低）", "notes": "关键依赖或时间压力说明", "evidence": "原文短句，必填"}
 }
 """,
         "prompt_guide": """
-高管视角：极简。只保留已达成共识的定论、需老板协调的资源/阻碍、风险红绿灯、里程碑置信度。每条能追溯原文。
+高管视角：极简。只保留已达成共识的定论、需要管理层介入的事项、风险红绿灯、里程碑置信度。每条能追溯原文。
 
 【会议结论 conclusion】——只放「已拍板的事实或方向」，不放「需要做XX」
 - 仅包含：会上已达成共识的结论、客户/领导提出的底线、确定的方向（如端云协同、场景路由、方言必须集成）。3～5 条短句。
-- 不包含：待办或阻碍（如「需要尽快确定 Protobuf」→ 放进 resource_blockers，不要放进 conclusion）。
+- 不包含：待办或介入请求（如「需要尽快确定 Protobuf」→ 放进 management_interventions，不要放进 conclusion）。
+- 为避免漏项，结论需优先覆盖以下维度（会议提到则必须体现）：产品方向/范围取舍、合规与口径底线、短期不做项、发布范围策略（如先内部或友好客户试点、暂不大规模放出）、方法论原则（如 AI 仅辅助）。
+- 若同一条原文同时涉及“结论+后续动作”，结论保留在 conclusion，动作放入 management_interventions（可分别引用同一段 evidence）。
+- 特别注意“否定型结论”不能丢失：例如“暂不做X/短期不做X/不走X方案/先不大规模放出”等，属于范围与优先级决策，必须保留为独立结论，不可被同义改写后吞并。
 
-【资源投入/阻碍 resource_blockers】
-- 需上级协调的资源（resource）或阻碍（blocker）：如算力/H20 申请、芯片或端侧内存约束、协议/定义未到位（如 Protobuf 小李未发）、人力或专项预算、方言数据集与训练资源等。会议提到几项就列几项，每条 type 填 resource 或 blocker，evidence 必填。
+【管理层介入事项 management_interventions】
+- 关注“需要管理动作才能推进”的事项，至少满足一个条件：①需要拍板（方向/范围/预算/优先级/取舍）②需要跨部门协调（资源调配、依赖对齐）③需要授权/背书（合规口径、对外说法）。
+- 每条必须包含：item/request_type/specific_request/owner_and_collaborators/time_window/evidence。
+- request_type 不限于固定枚举，只要会议语义明确“需要管理层介入”即可；specific_request 必须是具体动作（如确定/批准/指派/协调/确认）。
+- time_window 原文未提时填「未明确」；owner_and_collaborators 原文未提时填「未明确」。
+- 这是“介入请求列表”，不是风险列表。
+- 为避免遗漏：凡是出现“需要高管/领导/负责人推动、拍板、协调、背书、授权”的语义，即使信息不全也先纳入本模块，缺失字段用「未明确」补齐，不要因为字段不完整而丢弃事项。
 
 【重大风险红绿灯 risk_traffic_light】
 - red=致命（如重大延期、现场崩、交付不可达），yellow=需关注（如稳定性风险、时间紧），green=可接受。level 必为 red|yellow|green。
 - 需覆盖：技术风险（过热掉频、内存不足）、交付风险（方言赶不上推介会）、稳定性风险等。会议提到几项就列几项，每条 evidence 必填。
+- 每条风险都要给出 mitigation_strategy：优先写“当前正在做什么”；若原文仅描述风险无动作，可结合附近上下文给出“建议下一步动作”（可执行、可落地），如“先灰度上线/增加标注抽检/设合规口径评审门禁”等。
+- 分级硬规则：凡涉及合规、法律、监管、法务、违规处罚、数据合规/隐私违规等风险，一律标 red（即使原文语气偏保守也不降级）。
+- 风险回答“哪里可能出事、严重吗”；management_interventions 回答“需要管理层做什么动作”。两者不要混写。
+- 若会议同时出现“明确不做某能力（策略）”与“若做该能力可能引发的问题（风险）”，两条信息可并存：前者放 conclusion，后者放 risk_traffic_light，不互相替代。
+- 若会议确实未给出任何可推断动作，mitigation_strategy 填「待补充（会议未明确）」，不要留空。
 
 【里程碑状态 milestone_confidence】
 - 当前关键里程碑（如 2.0/推介会）的整体置信度（overall）、关键依赖或时间压力（notes）、evidence 必填。
+- notes 建议按“目标 + 时限 + 关键依赖”组织：例如“需在两周内完成可追溯与可信能力，依赖标注产能与合规口径明确”。不要只写泛化描述（如“功能需按时完成”）。
 
 只输出 JSON，禁止解释。evidence 必须为原文短句。
 """,
     },
 
     TEMPLATE_ID_EXTERNAL: {
-        "name_zh": "外部协作与商务模板",
+        "name_zh": "外部协作与商务纪要模板",
         "name_en": "The External-Facing Recap",
+        "display_zh_only": True,
         "desc": "脱敏与契约化：仅保留交付、责任、商务节点与下次同步；避免内部分歧外泄。",
         "audience": "第三方供应商、代理商、外包团队、大客户",
         "scenario": "对外对接会、验收会、商务周会",
         "sections": [
-            {"key": "deliverables", "label_zh": "交付物列表", "label_en": "Deliverables"},
-            {"key": "raci_matrix", "label_zh": "双方责任矩阵 (RACI)", "label_en": "RACI Matrix"},
-            {"key": "commercial_milestones", "label_zh": "商务节点", "label_en": "Commercial Milestones"},
-            {"key": "next_sync_time", "label_zh": "下一次同步时间", "label_en": "Next Sync Time"},
+            {"key": "deliverables", "label_zh": "交付清单（对外承诺）", "label_en": "Deliverables"},
+            {"key": "raci_matrix", "label_zh": "双方责任矩阵（RACI）", "label_en": "RACI Matrix"},
+            {"key": "commercial_milestones", "label_zh": "商务里程碑（验收/付款节点）", "label_en": "Commercial Milestones"},
+            {"key": "next_sync_time", "label_zh": "下次同步安排（时间/机制）", "label_en": "Next Sync Time"},
         ],
         "schema_json": """
 {
-  "deliverables": [{"item": "交付物描述", "owner_side": "我方/对方或具体方（如对方-赵总）", "due": "截止时间", "evidence": "原文短句，必填"}],
-  "raci_matrix": [{"task_or_area": "任务或领域", "R": "负责方", "A": "执行方", "C": "咨询方", "I": "知情方", "evidence": "原文短句，必填"}],
-  "commercial_milestones": [{"milestone": "节点描述", "criteria_or_payment": "验收标准或付款条件", "due": "时间", "evidence": "原文短句，必填"}],
-  "next_sync_time": {"datetime_or_desc": "时间或描述；若会议未约定则填「未明确」", "evidence": "原文短句或「会议未明确约定」"}
+  "deliverables": [{"item": "交付项", "owner_side": "责任方（我方/对方/具体人）", "due": "截止时间", "evidence": "原文短句，必填"}],
+  "raci_matrix": [{"task_or_area": "任务或领域", "R": "负责方（Responsible）", "A": "执行方（Accountable）", "C": "咨询方（Consulted）", "I": "知情方（Informed）", "evidence": "原文短句，必填"}],
+  "commercial_milestones": [{"milestone": "商务节点/里程碑", "criteria_or_payment": "验收标准或付款条件", "due": "时间", "evidence": "原文短句，必填"}],
+  "next_sync_time": {"datetime_or_desc": "下次同步时间或描述（若未约定填「未明确」）", "evidence": "原文短句或「会议未明确约定」"}
 }
 """,
         "prompt_guide": """
@@ -245,7 +264,14 @@ def template_ids():
 
 def template_names():
     """返回供 UI 使用的展示名列表：中文 (English)。"""
-    return [f"{TEMPLATES[tid]['name_zh']}（{TEMPLATES[tid]['name_en']}）" for tid in template_ids()]
+    names = []
+    for tid in template_ids():
+        t = TEMPLATES[tid]
+        if t.get("display_zh_only"):
+            names.append(t["name_zh"])
+        else:
+            names.append(f"{t['name_zh']}（{t['name_en']}）")
+    return names
 
 
 def template_id_to_display_name(template_id: str) -> str:
@@ -253,6 +279,8 @@ def template_id_to_display_name(template_id: str) -> str:
     t = TEMPLATES.get(template_id)
     if not t:
         return template_id
+    if t.get("display_zh_only"):
+        return t["name_zh"]
     return f"{t['name_zh']}（{t['name_en']}）"
 
 
@@ -273,14 +301,17 @@ def display_name_to_template_id(display_name: str) -> str:
         return TEMPLATE_ID_GROWTH
     if "高管" in d or "Exec" in d:
         return TEMPLATE_ID_EXEC
-    if "外部" in d or "External" in d or "商务" in d:
+    if "外部" in d or "External" in d or "商务" in d or "Recap" in d:
         return TEMPLATE_ID_EXTERNAL
     return TEMPLATE_ID_GENERAL
 
 
 def get_template(template_id: str) -> dict:
     """获取模板配置；传入 id 或展示名均可（展示名会转 id）。"""
-    tid = display_name_to_template_id(template_id) if template_id in template_names() else template_id
+    if template_id in TEMPLATES:
+        tid = template_id
+    else:
+        tid = display_name_to_template_id(template_id)
     return TEMPLATES.get(tid, TEMPLATES[TEMPLATE_ID_GENERAL])
 
 
@@ -342,7 +373,7 @@ def detect_template_id_from_data(data: dict) -> str:
         return TEMPLATE_ID_DEV
     if "pain_points" in keys or "core_selling_points" in keys or "launch_countdown" in keys:
         return TEMPLATE_ID_GROWTH
-    if "conclusion" in keys or "risk_traffic_light" in keys or "milestone_confidence" in keys:
+    if "conclusion" in keys or "risk_traffic_light" in keys or "milestone_confidence" in keys or "management_interventions" in keys or "resource_blockers" in keys:
         return TEMPLATE_ID_EXEC
     if "deliverables" in keys or "raci_matrix" in keys or "next_sync_time" in keys:
         return TEMPLATE_ID_EXTERNAL

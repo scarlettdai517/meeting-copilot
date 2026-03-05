@@ -16,7 +16,7 @@ except ImportError as e:
     print(f"   错误详情: {e}")
 
 import streamlit as st
-from templates import template_names, get_template_desc
+from templates import template_names, get_template_desc, display_name_to_template_id, template_id_to_display_name
 from extract import extract_structured
 from render import to_markdown
 from export_utils import export_json, action_items_to_csv
@@ -227,7 +227,9 @@ if selected_file != "（新建/不加载历史）":
         rec = load_meeting_record(selected_file)
         st.session_state["meeting_title"] = rec.get("title", "Untitled Meeting")
         saved_tpl = rec.get("template_name")
-        st.session_state["template_name"] = saved_tpl if saved_tpl in template_names() else template_names()[0]
+        # 兼容历史模板显示名变更：先归一化到模板 id，再映射为当前展示名
+        saved_tid = display_name_to_template_id(saved_tpl) if saved_tpl else "general"
+        st.session_state["template_name"] = template_id_to_display_name(saved_tid)
         st.session_state["transcript_text"] = rec.get("transcript", "")
         st.session_state["result_json"] = rec.get("result_json", None)
     except Exception as e:
@@ -298,7 +300,7 @@ with col2:
                 title=st.session_state.get("meeting_title", "Untitled Meeting"),
                 template_name=st.session_state.get("template_name", ""),
             )
-            st.markdown(md)
+            st.markdown(md, unsafe_allow_html=True)
 
             # ----------------------------
             # 问答区域（对所有有 result_json 的会议都显示）
