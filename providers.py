@@ -1,6 +1,6 @@
 """
 多模型/多提供商支持
-支持 OpenAI、Claude(Anthropic)、Google(Gemini)、DeepSeek、智谱(Zhipu)、Moonshot(Kimi)
+支持 OpenAI、Claude(Anthropic)、Google(Gemini)、DeepSeek、智谱(Zhipu)、面壁(MiniCPM)、Moonshot(Kimi)
 API 可从 .env 或界面配置的 data/llm_config.json 读取（界面配置优先）。
 """
 
@@ -76,6 +76,16 @@ PROVIDER_CONFIG = [
         "env_model": "ZHIPU_MODEL",
         "env_base_url": "ZHIPU_BASE_URL",
         "base_url_default": "https://open.bigmodel.cn/api/paas/v4",
+    },
+    {
+        "id": "minicpm",
+        "name": "面壁智能 (MiniCPM)",
+        "default_model": "",
+        "env_key": "MINICPM_API_KEY",
+        "env_model": "MINICPM_MODEL",
+        "env_base_url": "MINICPM_BASE_URL",
+        # MiniCPM 常见为 OpenAI 兼容接口；如使用自建 vLLM，可在 UI 中改为 http://localhost:8000/v1
+        "base_url_default": "https://openapi.modelbest.cn/v1",
     },
     {
         "id": "moonshot",
@@ -252,7 +262,7 @@ def chat_completion(
     if model is None:
         model = get_model_for_provider(provider_id)
 
-    # OpenAI 及 OpenAI 兼容 (DeepSeek / Zhipu / Moonshot)
+    # OpenAI 及 OpenAI 兼容 (DeepSeek / Zhipu / MiniCPM / Moonshot)
     if provider_id == "openai":
         return _chat_openai(system_prompt, user_prompt, temperature, model)
     if provider_id == "deepseek":
@@ -260,6 +270,10 @@ def chat_completion(
             provider_id, system_prompt, user_prompt, temperature, model
         )
     if provider_id == "zhipu":
+        return _chat_openai_compatible(
+            provider_id, system_prompt, user_prompt, temperature, model
+        )
+    if provider_id == "minicpm":
         return _chat_openai_compatible(
             provider_id, system_prompt, user_prompt, temperature, model
         )
@@ -301,7 +315,7 @@ def _chat_openai(
 
 
 def _get_openai_compatible_client(provider_id: str):
-    """获取 OpenAI 兼容 API 的 client（DeepSeek / Zhipu / Moonshot）"""
+    """获取 OpenAI 兼容 API 的 client（DeepSeek / Zhipu / MiniCPM / Moonshot）"""
     if OpenAIClient is None:
         raise RuntimeError("当前环境缺少依赖，请在项目目录运行：pip install -r requirements.txt 后重启应用")
     c = get_provider_config(provider_id)
@@ -316,6 +330,7 @@ def _get_openai_compatible_client(provider_id: str):
 _OPENAI_COMPATIBLE_FALLBACK = {
     "deepseek": "deepseek-chat",
     "zhipu": "glm-4-flash",
+    "minicpm": "minicpm",
     "moonshot": "moonshot-v1-8k",
 }
 
@@ -406,6 +421,6 @@ def is_provider_available(provider_id: str) -> bool:
         return False
     if provider_id == "google" and genai is None:
         return False
-    if provider_id in ("openai", "deepseek", "zhipu", "moonshot") and OpenAIClient is None:
+    if provider_id in ("openai", "deepseek", "zhipu", "minicpm", "moonshot") and OpenAIClient is None:
         return False
     return True
