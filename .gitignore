@@ -2,7 +2,6 @@
 data/llm_config.json
 
 # 本地会议数据和缓存（可选，不提交则仓库更干净）
-data/meetings/
 data/embeddings_cache/
 
 # 虚拟环境
